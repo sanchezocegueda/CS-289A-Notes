@@ -1,0 +1,110 @@
+\counterwithout{section}{chapter}
+\textbf{January 22$^{\text{nd}}$}
+
+Broadly speaking, this course is about finding patterns in \textbf{data} and then using these patterns to make predictions.
+We can achieve this by way of models and statistics that help us understand these patterns.
+Along the way, we will use optimization algorithms to ``learn'' the patterns.
+
+The core ingredient for this is data.
+Machine learning has changed a fair bit due to the increase in both quantity and quality of data out there.
+Neural networks, for instance, had a recent resurgence following the increase in big data.
+
+\section{Classification}
+Most commonly, what we want a learning algorithm to do is classification.
+To perform classification, we collect training points with class labels.
+For instance, we can think of debtors.
+We can label all debtors as either reliable debtors or defaulted debtors.
+Once we have this labeled data, we can use it to predict whether a new applicant will be a default debtor or a reliable debtor.
+
+% Add the balance/income graph
+
+In the graph above, we want to find the underlying pattern.
+One such way to do that is to draw a line through the 
+
+
+Given a set of points and a new 
+
+One method of classification is nearest-neighbor.
+In this method, we simply find the closest point to our point of interest and give it the same classification as its nearest neighbor.
+Another method is to use a linear classifier, where we draw a line as follows
+%add line
+After making this line, we simply determine that the points on the left of the separation are people who are likely to pay their bills on time and those on the right are more likely to default.
+
+Regardless of what method we use, we want to know whether our tool is correct.
+In order to do that, we need some more tools.
+
+Note that the nearest-neighbor classifier does not compute the decision boundary.
+It implicitly computes it because of how it works.
+On the other hand, the linear classifier \textit{does} indeed compute the decision boundary.
+Intuition says that the linear classifier is better, but that is just intuition;
+we need a more principled and justified way to determine which classifier is better.
+
+\subsection{Linear Classifiers}
+
+\subsection{Nearest Neighbor}
+
+\subsection{K-Nearest Neighbors}
+
+\section{Overfitting and Underfitting}
+Overfitting is when you give too much attention to the noise and not enough to the data.
+This is exactly what happened to the Nearest Neighbors classifier---it 
+
+\section{Digit Classification}
+Think of data as points in $n$-dimensional space.
+We can use a linear decision boundary.
+In $n$-dimensional space, this is an $(n-1)$-dimensional \textit{hyperplane}.
+
+\section{Train, Validate, Test}
+Machine learning, importantly, has an extra validation step.
+This makes it more practical than simple use of statistical models.
+
+The way we classify is as follows:
+\begin{enumerate}
+    \item We are given a set of \textbf{labeled data}---sample points with class labels.
+    \item We hold back a subset of the labeled points, called the \textbf{validation set}
+    \footnote{Typically, this is about 20\% of data, whereas the other 80\% of the data is the \textbf{training set}}.
+    \item \textit{Train} one or more classifiers:
+    they \textit{learn} how to distinguish an element from other elements.
+    For instance, they can learn to distinguish a digit 7 from anothe digit (say 6) that is \textit{not} 7.
+    \item Usually, train multiple training algorithms, or one algorithm with multiple hyperparameter settings, or both.
+    \item \textit{Validate} the trained classifiers on the validation set (which we held back specifically for this step).
+    We choose the classifier/hyperparameters with the lowest validation error.
+    This process of trying out all the different classifiers is called \textbf{validation}.
+    \item [Optional] \textit{Test} the best classifier on some test set of new data.
+    This is the final evaluation.
+    Typically, you do \textit{not} have the labels.
+    
+\end{enumerate}
+\textbf{Note:} Validation data should never be used to train.
+
+\section{Error}
+With this process, we have to make precise our notion of error.
+
+The training error $E_T$ is defined as the fraction of the training set not classified correctly.
+$$E_{T} = \frac{I}{D}$$
+
+The validation error is the fraction of the validation set not classified correctly.
+We use this to choose the classifier/hyperparameters.
+Generally, this will be higher than the training error.
+
+Finally, the test error is the fraction of the test set that is misclassified.
+This is used to evaluate \textbf{you}.
+
+Most machine learning algorithms have a few hyperparameters that control overfitting and underfitting.
+
+Underfitting is when your model is not complicated enough.
+For instance, $n$-nearest-neighbors is an algorithm that will always underfit.
+
+As models get more and more complex, the error goes down in the training data (overfitting).
+
+Validation is the heart of machine learning.
+
+\textbf{Overfitting:} when the validation/test error deteriorates because the classifier becomes too sensitive to outliers or other spurious patterns in the data that do not reflect reality.
+
+\textbf{Underfitting:} when the validation/test error deteriorates because the classifier is not flexible enough to fit the real patterns.
+
+\textbf{Outliers:} points with atypical labels.
+The more outliers you have, the more likely you are to overfit.
+
+Having really robust data with few outliers will let you fit more tightly to the data.
+The goal in machine learning is to create classifiers that \textit{generalize} to other data.
