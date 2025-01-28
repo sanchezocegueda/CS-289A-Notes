@@ -1,0 +1,236 @@
+\setcounter{section}{0}
+% \counterwithout{section}{chapter}
+
+\textbf{January $27^{\text{th}}$}
+
+This lecture covered classifiers,
+
+\section{Classifiers}
+You are gizven a \textbf{sample} of $n$ \textbf{observations}, each with $d$ features.
+Some observations belong to \textbf{class} $C$;
+some do not.
+
+\subsection{Example}
+Observations are ice cream lovers.
+Features are height \& age $(d = 2)$.
+Some are in class ``chocolate,'' some prefer vanilla.
+The goal is to predit their preferrred flavor based on their height \& age.
+
+We can represent each observation as a point in $d$-dimensional space, called a \textbf{sample point} or a \textbf{feature vector}, or \textbf{independent variables}.
+
+% TODO: add the different
+
+In the first example, we can draw a straight line, and create a linear decision boundary.
+The second example is not quite as straightforward, but we can use a quadratic decision boundary .
+The third decision boundary is even less clear.
+We can draw a line that clearly separates the two labels, but it will most likely be prone to overfitting, as there does not seem to be any rhyme or reason for why the curve is shaped that way.
+
+Some (not all) classifiers work by computing a \textbf{decision function}.
+
+
+
+% TODO add the figures of the pink-green bullseye
+
+The plot on the left is a 3D plot, while the one on the right is a 2D isocontour plot.
+This is specifically for the function $f(x, y) = \sqrt{x^2+ y^2} - 3$.
+The function the right plots different contours.
+The one we care about is the one where $f(x) = 0$, as we have stated earlier.
+
+In three dimensions, each decision boundary is a sphere, as shown below:
+
+% TODO: Add picture of 3D sphere isosurfaces plot.
+
+\section{Linear classifiers}
+For this section, we will focus on linear classifiers, which are classifiers where the decision boundary is a line, plane, or hyperplane.
+Usually, linear classifiers will compute a linear decision function.
+Note: there do exist examples where we have a quadratic decision function but a linear decision boundary.
+
+
+\subsection{Math Review}
+Vectors will be written in the form
+$x = \begin{bmatrix}
+    x_1 \\
+    x_2 \\
+    \vdots \\
+    x_d
+\end{bmatrix} 
+= \begin{bmatrix}
+    x_1 \; x_2 \; \dots x_d
+\end{bmatrix}^\top.$
+We can think of $x$ as a point in 5-dimensional space.
+
+We also have a couple of conventions:
+
+\begin{enumerate}
+    \item Uppercase roman letters ($A, B, C$), etc: matrix, random variable, set.
+    \item Lowercase roman letters ($x, y, z$), etc:
+    vectors.
+    \item Greek letters ($\alpha, \beta, \gamma$), etc: real scalars
+    \item $n$ is the number of sample points.
+    \item $d$ is the number of features per sample point.
+    We can think of $d$ as the \textit{dimension} of sample points.
+    \item $i, j, k$ are most often going to be indices.
+    \item Functions (often scalar) will be written as $f(\cdot), g(\cdot)$, etc.
+    \item We will mostly use the \textit{Euclidean inner product}.
+    It is also often called the \textit{dot product}:
+    $x \cdot y = x_1y_1 + x_2+y_2 + ... + x_dy_d = \sum_{i = 1}^d x_iy_i = x^\top y$
+    \item $f(x) = w \cdot x + \alpha$ is a \textit{linear function} in $x$.
+    \item The Euclidean norm of a vector $x$ is
+    $||x|| = \sqrt{x\cdot x} = \sqrt{x_1^2+x_2^2+...+x_d^2}$.
+    $||x||$ is the (Euclidean) \textit{length} of a vector $x$.
+    Given a vector $x \neq 0$, $\frac{x}{||x||}$ is a \textit{unit} vector (a vector of length 1).
+    When we ``normalize'' a vector $x$, we mean that we replace $x$ with $\frac{x}{||x||}$.
+    We can use a dot product to compute angles:
+    $\cos\theta  =\frac{x \cdot y}{||x|| \; ||y||} = \frac{x}{||x||} \frac{y}{||y||}$.
+    Remember: two unit vectors $\rightarrow$ take the dot product $\rightarrow$ you get the angle.
+    If you have an acute angle, $x \cdot y > 0$, if you have a right angle, $x \cdot y = 0$, and if you have an obtuse angle, you get $x \cdot y < 0$.
+\end{enumerate}
+
+Suppose that we are given a linear decision function
+$f(x) = w \cdot x + \alpha$,
+the decision boundary is the set of all points $x$ where that function is 0.
+Formally, $H = \{x : w \cdot x + \alpha = 0\}$.
+This is called a hyperplane.
+
+The main characteristics to remember about hyperplanes is that:
+\begin{enumerate}
+    \item They cut a $d$-dimensional space in two.
+    \item They're flat.
+    \item They're infinite.
+\end{enumerate}
+
+Theorem: Let $x, y$ be 2 points that lie on $H$.
+Then $w \cdot (y - x) = 0$.
+
+Proof: $w \cdot y = -\alpha$ and $w \cdot x = -\alpha$.
+So $w \cdot (y - x) = w \cdot y - w\cdot x = -\alpha - (-\alpha) = 0$. $\Box$
+
+% TODO: add the geometric intuition of the theorem
+
+$w$ is chosen to be a vector orthogonal to the hyperplane $H$.
+This means that $w$ is orthogonal to any line segment that lies on $H$.
+Therefore, we call $w$ the \textbf{normal vector} of the hyperplane $H$, because (as the theorem shows), $w$ is \textit{normal} or \textit{perpendicular} or \textit{orthogonal} to the hyperplane $H$.
+
+
+
+The most important aspect of a hyperplane is that they're flat, they're infinite, and they cut the $d$-dimensional space into two.
+
+If $w$ is a unit vector, then $f(x) = w \cdot x + \alpha$ is the \textbf{signed distance} from $x$ to $H$.
+In other words, it is positive on $w$'s side of $H$ and it is negative on the other side.
+Moreover, the distance from $H$ to the origin of the coordinate system is $\alpha$.
+This can be seen by plugging in $x = 0$, which nets us $f(0) = \alpha$.
+Hence $\alpha = 0$ if and only if the hyperplane $H$ passes through the origin ($o \in H$).
+
+The coefficients in $w$, plus $\alpha$, are called \textbf{weights}.
+Sometimes, \textbf{weights} are called \textbf{parameters} or \textbf{regression coefficients}.
+This is why the vector is named $w$.
+
+Generally, in machine learning, we want to learn the weights that will give us good results on the training and validation data.
+
+The training points are \textbf{linearly separable}.
+This means that there exists some hyperplane $H$ that correctly classifies all of the training points.
+
+\subsection{A simple classifier}
+In this section, we will go over the \textbf{centroid method}, which is a simple linear classification algorithm.
+The algorithm computes the mean $\mu_C$ of all the training points in class $C$ and mean $\mu_X$ of the set of points $X$ \textit{not} in class $C$.
+We use the decision function
+$$f(x) = (\mu_C - \mu_X) \cdot x - (\mu_C - \mu_X )\cdot \frac{\mu_C + \mu_X}{2}$$
+We can think of $\frac{\mu_C + \mu_X}{2}$ as the midpoint between $\mu_C$ and $\mu_X$.
+So the decision boundary is the hyperplane that bisects the line segment with endpoint s $\mu_C$ and $\mu_X$.
+This is a good classifier when classes $C$ and $X$ have a normal distribution.
+We want $f(x) = 0$ when $x$ is equal to the midpoints.
+
+\subsection{Perceptron}
+This is an obsolete algorithm, but it still has some historical and pedagogical value.
+It was created by Frank Rosenblatt in 1957.
+The reason why it is obsolete is that it is slow, but it is correct for linearly separable points.
+It also uses a numerical optimization algorithm, namely \textbf{gradient descent}, to find a hyperplane that separates all the class $C$ points from all the non-$C$ points.
+
+Consider $n$ sample points $X_1, X_2, ..., X_n$.
+As input, we receive these training points, and we also receive the \textbf{labels} 
+$y_i = \begin{cases}
+    1
+    &\text{if} X_i \in C, \text{ and} \\
+    -1
+    &\text{if} X_i \notin C.
+\end{cases}$.
+For simplicity, we will only consider decision boundaries that \textit{pass through the origin}.
+
+The goal is to find weights $w$ such that
+
+\begin{align*}
+     x_i \cdot w \geq 0 \;&\text{if}\; y_i = 1, \text{ and}\\
+     x_1 \cdot w \leq 0 \; &\text{if}\; y_i = -1.
+\end{align*}
+
+Equivalently: $y_i X_i \cdot w \geq 0$ (constraint)
+
+Idea: We define a risk function $R$ that is positive if some constraint is violated.
+Then we use \textbf{optimization} to choose $w$ that minimizes $R$.
+
+We define the \textbf{loss function}
+$L(z, y_i) = \begin{cases}
+    0 
+    &\text{if } y_i z \geq 0, \text{ and} \\
+    -y_iz
+    &\text{otherwise}.
+\end{cases}$
+
+If $z$ has the same sign as $y_i$, the loss function is zero.
+If $z$ has the wrong sign, the loss function is positive.
+Define the \textbf{risk function} (also known as the \textbf{objective function} or the \textbf{cost function}) as
+\begin{align*}
+R(w) &= \frac{1}{n}\sum_{i=1}^nL(X_i \cdot w, y_i) \\
+    &= \frac{1}{n}\sum_{i \in v} -y_i X_i \cdot w
+\end{align*}
+where $V$ is the set of indicies $i$ for which $y_iX_i \cdot w < 0$.
+If $w$ classifies all $X_1, ..., X_n$ correctly, then $R(w) = 0$.
+Otherwise, $R(w)$ is positive, and we want to find a better $w$.
+
+Our goal can then be rephrased as the goal of solving this optimization problem:
+\begin{center}
+\fbox{Find $w$ that minimizes $R(w)$.}
+\end{center}
+
+
+
+
+
+
+
+
+
+
+
+% TODO: Add a drawing of the centroid
+
+% $$f(x) = \begin{dcases*}
+%     f(x) > 0 
+%     &if x $\in$ class C\\
+    
+% \end{dcases*}$$
+
+
+
+
+
+
+
+
+\section{Glossary}
+% \begin{definition}
+\textbf{Decision boundary:} the boundary chosen by our classifier to separate items in the class from those not.
+% \end{definition}
+
+\textbf{Overfitting:} (informally) when your decision boundary fits spurious detail so well that it doesn't classify future points well.
+Overfitting usually becomes apparent during validation.
+
+\textbf{Decision function:}
+A function $f(x)$ that maps a point $x \in \real^d$ to a scalar such that
+$f(x) > 0$ if $x \in C$ and $f(x) \leq 0$ if $x \notin C$.
+This is also known as a \textbf{predictor function} or \textbf{discriminant function}.
+
+For these classifiers, the decision boundary is $\{x \in \real^d : f(x) = 0\}$.
+Usually, this set is a $(d-1)$-dimensional surface in $\real^d$.
+$\{x: f(x) = 0\}$ is also called an \textbf{isosurface} of $f$ for the \textbf{isovalue} 0.
+Note that $f$ has other \textbf{isosurfaces} for other \textbf{isovalues}, e.g. $\{x : f(x) = 1\}$.
