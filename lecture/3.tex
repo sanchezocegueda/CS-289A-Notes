@@ -1,0 +1,140 @@
+January 29$^\text{th}$
+
+
+Objects in $x$-space transform to objects in $w$-space:
+
+
+
+x-space: hyperplane: $\{z: w\cdot z = 0\}$.
+
+w-space: point: w
+
+\begin{table}[h!]
+  \begin{center}
+    \caption{Your first table.}
+    \label{tab:table1}
+    \begin{tabular}{|c|c|} % <-- Alignments: 1st column left, 2nd middle and 3rd right, with vertical lines in between
+    \hline
+      \textbf{x-space} & \textbf{w-space} \\
+      \hline
+      hyperplane: $\{z : w \cdot z = 0\}$ & point: $w$\\
+      points: x & hyperplane: $\{z: x \cdot z = 0\}$ \\
+      \hline
+    \end{tabular}
+  \end{center}
+\end{table}
+
+Point $x$ lies on hyperplane $\{z : w \cdot z = 0\} \Leftrightarrow w \cdot x = 0\Leftrightarrow $ point $w$ lies on hyperplane $\{z : x \cdot z = 0\}$.
+
+For points in the class $C$:
+If we want to enforce inequality $x \cdot w \geq 0$, that means
+\begin{itemize}
+    \item in $x$-space, $x$ should be on the same side of the $\{z : w \cdot z = 0\}$ as $w$
+    \item in $w$-space, $w$ should be on the same side of $\{z: x \cdot z = 0\}$ as $x$
+\end{itemize}
+
+% TODO: add x-space and w-space diagrams
+
+Find the hyperplane by splitting the space in half. 
+You considering each point as a normal vector of a hyperplane in $w$-space.
+Then, you pick the side that is the same as the points in $C$, and the opposite side for points not in $C$.
+After you have all these half-spaces, you can take the intersection of them.
+
+
+An optimization algorithm: 
+
+\section{Gradient Descent}
+Gradient descent is on $R$
+The gradient points `up,' in the direction orthogonal to the contour.
+Moving in the direction of the gradient would give us gradient \textit{ascent}, but we want gradient \textit{descent}, so we move in the \textit{opposite} direction to the gradient.
+The GD algorithm will halt iff the points are linearly separable.
+
+Given a starting point $w \neq 0$, find gradient of $R$ with respect to $w$ at that particular point $w$;
+this gradient is the direction of steepest ascent.
+Take a step in the opposite direction.
+Recall that $\nabla R(w) = \begin{bmatrix}
+    \frac{\partial R}{\partial w_1} \\
+    \frac{\partial R}{\partial w_2} \\
+    \vdots \\
+    \frac{\partial R}{\partial w_d}
+\end{bmatrix}$ and $\nabla_w(z\cdot w) = \begin{bmatrix}
+    z_1 \\
+    z_2 \\
+    \vdots \\
+    z_d
+\end{bmatrix}$.
+
+$\nabla R(w) = \nabla \sum_{i\in V} -y_i  X_i \cdot w = - \sum_{i\in V}y_i X_i$
+The way downhill is thus $\sum_{i\in V}y_i X_i$.
+
+Pseudocode:
+\begin{enumerate}
+    \item $w \gets $ arbitrary nonzero starting point (good choice is any $y_iX_i$)
+    \item while ($R(w) > 0$):
+    \item $\;\;\;\;$ $V \gets$ set of indices $i$ for which $y_iX_i < 0$
+    \item $\;\;\;\;$ $w \gets w + \epsilon \sum\limits_{i \in V} y_iX_i$
+    \item return $w$
+\end{enumerate}
+$\epsilon > 0$ is the \textbf{step size}, also known as the \textbf{learning rate}.
+This is chosen empirically.
+
+\subsection{Problems}
+This is a slow algorithm.
+Every step takes $\mathcal O (nd)$ time.
+
+\section{Stochastic Gradient Descent}
+Idea: at each step, pick \textbf{one} misclassified point $X_i$ and do gradient descent on point $i$'s loss function, $L(X_i \cdot w, y_i)$.
+This is called the \textbf{Perceptron algorithm}.
+Each step takes $\mathcal O (d)$ time, instead of $\mathcal O(nd)$ time.
+
+Pseudocode:
+\begin{enumerate}
+    \item while some $y_iX_i \cdot w < 0$:
+    \item \tab $w \gets w + \epsilon y_i X_i$
+    \item return $w$
+\end{enumerate}
+Perceptron can misclassify points that had already been properly classifed.
+However, by the Perceptron Convergence Theorem, if the data is linearly separable, eventually the Perceptron algorithm will succed, and it will take $\mathcal O (\frac{r^2}{\gamma^2})$, where $r = \max ||X_i||$ and $\gamma$ is the max margin.
+
+Perceptron risk function.
+
+What if it is possible to find a separating hyperplane, but not one that passes through the origin?
+We will increase the dimension of all our points by 1 (add a fictitious dimension to each training and test point).
+The decision function is $f(x) = w \cdot x + \alpha = \begin{bmatrix}
+    w_1 \; w_2\; \alpha
+\end{bmatrix} \cdot
+\begin{bmatrix}
+    x_1 \\
+    x_2 \\
+    1
+\end{bmatrix}$
+
+Now we have sample points in $\mathbb R ^{d+1}$,
+all lying on the same hyperplane $x_{d+1} = 1$.
+If we then run perceptron algorithm in $(d+1)$-dimensional space, then we get a $d$-dimensional hyperplane that passes through the origin in $(d+1)$-dimensional space, but not necessarily in $d$-dimensional space.
+
+\section{Maximum Margin Classifiers}
+The \textbf{margin} of a linear classifier is the distance from the decision boundary to the nearest training point.
+What if we make the margin as wide as possible?
+
+Vectors whose distance to the margin is exactly the margin.
+A wider margin generalizes better.
+
+We enforce the constraints
+$y_i(w \cdot X_i + \alpha) \geq 1$ for $i \in [1, n]$.
+
+Recall: if $||w|| = 1$, the signed distance from hyperplane to $X_i$ is $w \cdot X_i + \alpha$.
+Otherwise, it's $\frac{w}{||w||} \cdot X_i + \frac{\alpha}{||w||}$.
+Hence the margin is $\min_i \frac{1}{||w||}|w \cdot X_i + \alpha| \geq \frac{1}{||w||}$.
+
+To maximize the margin, we can minimize $||w||$.
+
+Optimization problem:
+\begin{center}
+\fbox{Find $w$ and $\alpha$ that minimize $||w||^2$ subject to $y_i(X_i\cdot w + \alpha) \geq 1$ for all $i \in [1, n]$}
+\end{center}
+This is called a \textbf{quadratic program} in $d+1$ dimensions and $n$ constraints.
+$d$ dimension for $w$, one for $\alpha$, and $n$ constrains, one for each training point.
+It has one unique solution if the points are linearly separable.
+If they are not linearly separable, then this has no solution.
+The solution is called a maximum margin classifier, also known as a hard-margin support-vector machine.
