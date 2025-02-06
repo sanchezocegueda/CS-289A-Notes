@@ -1,0 +1,69 @@
+\section{The Diagram}
+We want to know the variables, objective function, and constraints.
+
+examples: unconstrained, complex programs, least squares, PCA.
+
+In CS 289A, we primarily work on finding models and on turning that into optimization problems that we can solve.
+
+It's worth spending a lot of time thinking a lot about the model.
+*Check out the diagram that he wrote in his notes.*
+It is a 4-level decomposition for machine learning problems.
+It is helpful to know where you are in this diagram.
+
+For the rest of this lecture, we will revisit some optimization problems.
+
+\section{Optimization Problems}
+One of the best things you can do is learn to recognize the kinds of problems that you are working with in the first place.
+
+\subsection{Unconstrained}
+Here, the goal is to find some $w$ that minimizes (or maximizes) a continuous \textbf{objective function} $f(w)$.
+If $f$ is smooth (it is infinitely differentiable).
+$f$ is smooth if its gradient is continuous too.
+Smooth functions make our lives easier.
+
+Given a smooth function $f$, we want to find a \textbf{global minimum}.
+That is, find a value $w$ suhc that $f(w) \leq f(v)$ for every $v$.
+Global minima are hard to find for a lot of problems, so we will often have to settle for \textbf{local minima}.
+A \textbf{local minimum} of $f$ is a value such that $f(w) \leq f(v)$ for every $v$ in some small ball centered at $w$.
+
+Usually, finding a local minimum is easy (tractable), whereas finding the global minimum is hard (or impossible).
+Exception: A function is \textbf{convex} if for every $x, y \in \real^d$, the line segment connecting $(x, f(x))$ to $(y, f(y))$, then that line segment does not go below $f(\cdot)$ in that graph.
+Formally: 
+
+\subsubsection{Convex Functions}
+Formally, we define a function $f$ as \textbf{convex} if for every $x, y \in \real^d$ and $\beta \in [0, 1]$, $f(x + \beta(y - x)) \leq f(x) + \beta(f(y) - f(x))$.
+``The point on the graph has to be below the line segment.''
+
+One example of a convex risk function is the perceptron risk function.
+This helps gradient descent find the global minimum of that function.
+
+
+A convex function has either
+\begin{itemize}
+    \item No minimum, or
+    \item Just one local minimum, or
+    \item A connected set of local minima that are all global minima with equal $f$.
+\end{itemize}
+
+Gradient descent:
+repeat $w \gets w - \epsilon \nabla f(w)$.
+
+High ellipticity of the contours, AKA ill-conditioning of the Hessian, means no learning rate is good in all dimensions.
+Well-conditioned matrices are usually circles.
+
+\section{Linear Program}
+A linear program is composed of a linear objective function, as well as linear \textbf{inequality} constraints.
+Inequalities are harder to reason about than equality.
+Our goal in a linear program is to find some vector $w$ that maximizes (or minimizes) $c \cdot w$ subject to $Aw \leq b$ (component-wise).
+Where $A \in \real^{n \times d}$, $b \in \real^n$, expressing $n$ \textbf{linear constraints}:
+$A_i \cdot w \leq b_i$ for all $i \in \{1, ..., n\}$.
+The set of points $w$ that satisfy all constraints is a convex \textbf{polytope} called the feasible region $F$.
+The \textbf{optimum} is the point in $F$ that is furthest in the direction $c$.
+A point set $P$ is \textbf{convex} if for $p, q \in P$, the line segment with endpoints $p, q$ lies entirely in $P$.
+The constraints that touch the optimum are called \textbf{active constraints}.
+
+\subsection{Quadratic Programs}
+Quadratic and convex objective function, with linear equality constraints.
+The goal is to find a vector $w$ that minimizes $f(w) = w^\top Q w  + c^\top w$, subject to $Aw \leq b$, where $Q$ is symmetric, positive semi-definite matrix.
+
+Example: find max margin classifier.
